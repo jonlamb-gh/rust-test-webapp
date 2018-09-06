@@ -4,7 +4,7 @@ Local webapp experiments with cargo-web
 ## Running
 
 ```bash
-cargo web run
+cargo web start
 ```
 
 ## Links
