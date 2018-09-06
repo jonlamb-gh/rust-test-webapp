@@ -3,7 +3,13 @@ name = "rust-test-webapp"
 version = "0.0.1"
 authors = ["jonlamb-gh <lamb.jon.io@gmail.com>"]
 
+[features]
+default = ["web-spa"]
+web-spa = ["yew"]
+
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 dimensioned = "0.7"
 steel-cent = "0.2"
+stdweb = "0.4"
+yew = {version = "0.4.0", optional = true}
