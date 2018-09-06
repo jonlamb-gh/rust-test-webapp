@@ -4,3 +4,5 @@ version = "0.0.1"
 authors = ["jonlamb-gh <lamb.jon.io@gmail.com>"]
 
 [dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+dimensioned = "0.7"
