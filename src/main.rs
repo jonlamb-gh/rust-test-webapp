@@ -22,4 +22,8 @@ fn main() {
     invoice.add_piece(piece);
 
     println!("{:#?}", invoice);
+
+    for p in invoice.pieces() {
+        println!("board feet: {}", p.dimension().board_feet());
+    }
 }

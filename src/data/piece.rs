@@ -15,7 +15,10 @@ impl Piece {
     }
 
     pub fn description(&self) -> &str {
-        println!("\n{:#?}\n", self.dimension.board_feet());
         &self.description
+    }
+
+    pub fn dimension(&self) -> &BoardDimension {
+        &self.dimension
     }
 }

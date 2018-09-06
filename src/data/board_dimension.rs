@@ -15,6 +15,7 @@ pub struct BoardDimension {
 impl BoardDimension {
     pub fn new() -> Self {
         Self {
+            // should be 40 board feet
             length: ucum::Meter::from(6.0 * ucum::FT_I),
             width: ucum::Meter::from(10.0 * ucum::IN_I),
             thickness: ucum::Meter::from(8.0 * ucum::IN_I),

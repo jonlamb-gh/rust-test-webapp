@@ -23,9 +23,7 @@ impl Invoice {
         self.pieces.push(piece);
     }
 
-    /*
     pub fn pieces(&self) -> &[Piece] {
         &self.pieces
     }
-    */
 }
