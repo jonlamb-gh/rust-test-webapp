@@ -1,5 +1,6 @@
 extern crate chrono;
 extern crate dimensioned as dim;
+extern crate steel_cent;
 
 mod data;
 
@@ -15,15 +16,15 @@ fn main() {
 
     println!("Creating a new piece");
 
-    let piece = Piece::new();
+    let piece_a = Piece::new();
+    invoice.add_piece(piece_a);
 
-    println!("Piece description: {}", piece.description());
-
-    invoice.add_piece(piece);
+    let piece_b = Piece::new();
+    invoice.add_piece(piece_b);
 
     println!("{:#?}", invoice);
 
-    for p in invoice.pieces() {
-        println!("board feet: {}", p.dimension().board_feet());
-    }
+    println!("sub_total_cost = {}", invoice.sub_total_cost());
+    println!("sales_tax_cost = {}", invoice.sales_tax_cost());
+    println!("total_cost = {}", invoice.total_cost());
 }

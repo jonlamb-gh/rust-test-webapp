@@ -6,13 +6,13 @@ pub use dim::ucum;
 use dim::Dimensionless;
 
 #[derive(Clone, Debug)]
-pub struct BoardDimension {
+pub struct BoardDimensions {
     length: ucum::Meter<f64>,
     width: ucum::Meter<f64>,
     thickness: ucum::Meter<f64>,
 }
 
-impl BoardDimension {
+impl BoardDimensions {
     pub fn new() -> Self {
         Self {
             // should be 40 board feet

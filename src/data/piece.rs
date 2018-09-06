@@ -1,16 +1,20 @@
-use data::BoardDimension;
+use data::BoardDimensions;
+use data::{Lumber, LumberType};
+use steel_cent::SmallMoney;
 
 #[derive(Clone, Debug)]
 pub struct Piece {
     description: String,
-    dimension: BoardDimension,
+    board_dimensions: BoardDimensions,
+    lumber_type: LumberType,
 }
 
 impl Piece {
     pub fn new() -> Self {
         Self {
             description: String::from("ADD PIECE DESCRIPTION"),
-            dimension: BoardDimension::new(),
+            board_dimensions: BoardDimensions::new(),
+            lumber_type: LumberType::DouglasFir,
         }
     }
 
@@ -18,7 +22,14 @@ impl Piece {
         &self.description
     }
 
-    pub fn dimension(&self) -> &BoardDimension {
-        &self.dimension
+    pub fn board_dimensions(&self) -> &BoardDimensions {
+        &self.board_dimensions
+    }
+
+    pub fn cost(&self) -> SmallMoney {
+        let lumber = Lumber::new(self.lumber_type.clone());
+        let fob_price = lumber.fob_price();
+
+        fob_price * self.board_dimensions.board_feet()
     }
 }
