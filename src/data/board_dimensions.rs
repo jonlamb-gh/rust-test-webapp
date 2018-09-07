@@ -4,6 +4,7 @@
 
 pub use dim::ucum;
 use dim::Dimensionless;
+use std::fmt::{self, Display, Formatter};
 
 #[derive(Clone, Debug)]
 pub struct BoardDimensions {
@@ -31,5 +32,18 @@ impl BoardDimensions {
     //pub fn board_feet(&self) -> BoardFoot<f64> ?
     pub fn board_feet(&self) -> f64 {
         *(self.volume() / ucum::BF_I).value()
+    }
+}
+
+/// Displays 'T in X W in X L ft'
+impl Display for BoardDimensions {
+    fn fmt(&self, fmt: &mut Formatter) -> Result<(), fmt::Error> {
+        write!(
+            fmt,
+            "{} in X {} in X {} ft",
+            self.thickness / ucum::IN_I,
+            self.width / ucum::IN_I,
+            self.length / ucum::FT_I
+        )
     }
 }

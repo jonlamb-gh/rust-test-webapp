@@ -17,7 +17,7 @@ impl Lumber {
     pub fn new(lumber_type: LumberType) -> Self {
         Self {
             description: String::from(lumber_type.to_str()),
-            fob_price: SmallMoney::of_major_minor(USD, 2, 60),
+            fob_price: lumber_type.fob_price(),
         }
     }
 
@@ -30,6 +30,12 @@ impl LumberType {
     pub fn to_str(&self) -> &'static str {
         match self {
             LumberType::DouglasFir => "Douglas Fir",
+        }
+    }
+
+    pub fn fob_price(&self) -> SmallMoney {
+        match self {
+            LumberType::DouglasFir => SmallMoney::of_major_minor(USD, 2, 60),
         }
     }
 }

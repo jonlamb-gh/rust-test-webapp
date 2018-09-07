@@ -61,16 +61,30 @@ impl Renderable<Context, PiecesModel> for PiecesModel {
                 <tr>
                     <td>{ piece.lumber_type().to_str() }</td>
                     <td>{ piece.description() }</td>
+                    <td>{ format!("{}", piece.board_dimensions()) }</td>
+                    <td>{ "1" }</td>
+                    <td>{ piece.board_dimensions().board_feet() }</td>
+                    <td>{ format!("{}", piece.lumber_type().fob_price()) }</td>
+                    <td>{ format!("{}", piece.cost()) }</td>
                 </tr>
             }
         };
 
         html! {
             <>
-                <h2>{"a header here"}</h2>
+                <h2>{"New Invoice"}</h2>
                 <table>
                     <thead>
-                        <tr><th>{"Lumber Type"}</th><th>{"Description"}</th><th>{" "}</th></tr>
+                        <tr>
+                            <th>{"Lumber Type"}</th>
+                            <th>{"Description"}</th>
+                            <th>{"Dimensions (T x W x L)"}</th>
+                            <th>{"Quantity"}</th>
+                            <th>{"BF"}</th>
+                            <th>{"fob <LOCATION>"}</th>
+                            <th>{"Cost"}</th>
+                            <th>{" "}</th>
+                        </tr>
                     </thead>
                     <tbody>
                         { for self.pieces.iter().map(|p| piece_row(p)) }
