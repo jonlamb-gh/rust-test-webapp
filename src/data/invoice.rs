@@ -5,7 +5,8 @@ use steel_cent::SmallMoney;
 
 #[derive(Clone, Debug)]
 pub struct Invoice {
-    date: DateTime<Utc>,
+    // TODO
+    //date: DateTime<Utc>,
     pieces: Vec<Piece>,
     estimated_shipping_cost: SmallMoney,
 }
@@ -13,16 +14,19 @@ pub struct Invoice {
 impl Invoice {
     pub fn new() -> Self {
         Self {
-            date: Utc::now(),
+            // this panics in the chrome console
+            //date: Utc::now(),
             pieces: Vec::<Piece>::new(),
             // TODO
             estimated_shipping_cost: SmallMoney::zero(USD),
         }
     }
 
+    /*
     pub fn date(&self) -> &DateTime<Utc> {
         &self.date
     }
+    */
 
     pub fn add_piece(&mut self, piece: Piece) {
         self.pieces.push(piece);

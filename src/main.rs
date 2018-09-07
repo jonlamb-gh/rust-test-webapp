@@ -1,3 +1,5 @@
+#![recursion_limit = "128"]
+
 #[cfg(feature = "web-spa")]
 #[macro_use]
 extern crate yew;

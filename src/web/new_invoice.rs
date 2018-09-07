@@ -1,48 +1,42 @@
-// TODO - page level org?
-
 use stdweb::web::html_element::SelectElement;
-use yew::callback::Callback;
 use yew::format::Json;
 use yew::prelude::*;
 
-use data;
 use data::*;
 use web::*;
 
-pub enum PiecesMsg {
-    Todo,
+pub enum NewInvoiceMsg {
+    AddPiece,
 }
 
-#[derive(Clone)]
-pub struct PiecesModel {
-    pieces: Vec<Piece>,
+pub struct NewInvoiceModel {
+    invoice: Invoice,
 }
 
 #[derive(Clone, Default, PartialEq)]
-pub struct PiecesProps {}
+pub struct NewInvoiceProps {}
 
-impl Component<Context> for PiecesModel {
-    type Message = PiecesMsg;
-    type Properties = PiecesProps;
+impl Component<Context> for NewInvoiceModel {
+    type Message = NewInvoiceMsg;
+    type Properties = NewInvoiceProps;
 
-    fn create(props: Self::Properties, context: &mut Env<Context, Self>) -> Self {
-        context.console.debug("creating PiecesModel");
+    fn create(_props: Self::Properties, context: &mut Env<Context, Self>) -> Self {
+        context.console.debug("creating NewInvoiceModel");
 
-        let piece_a = Piece::new();
-        let piece_b = Piece::new();
-
-        let mut pieces = Vec::<Piece>::new();
-        pieces.push(piece_a);
-        pieces.push(piece_b);
-
-        PiecesModel {
-            //pieces: Vec::<Piece>::new(),
-            pieces,
+        NewInvoiceModel {
+            invoice: Invoice::new(),
         }
     }
 
     fn update(&mut self, msg: Self::Message, context: &mut Env<Context, Self>) -> ShouldRender {
-        true
+        match msg {
+            NewInvoiceMsg::AddPiece => {
+                context.console.debug("adding a Piece");
+                let piece = Piece::new();
+                self.invoice.add_piece(piece);
+                true
+            }
+        }
     }
 
     fn change(
@@ -54,7 +48,7 @@ impl Component<Context> for PiecesModel {
     }
 }
 
-impl Renderable<Context, PiecesModel> for PiecesModel {
+impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
     fn view(&self) -> Html<Context, Self> {
         let piece_row = |piece: &Piece| {
             html!{
@@ -87,8 +81,15 @@ impl Renderable<Context, PiecesModel> for PiecesModel {
                         </tr>
                     </thead>
                     <tbody>
-                        { for self.pieces.iter().map(|p| piece_row(p)) }
+                        { for self.invoice.pieces().iter().map(|p| piece_row(p)) }
                     </tbody>
+                    <tfoot>
+                        <tr><td>
+                            <button onclick=|_| NewInvoiceMsg::AddPiece, >
+                                <i class=("fa", "fa-plus-square"), aria-hidden="true",></i>
+                            </button>
+                        </td></tr>
+                    </tfoot>
                 </table>
             </>
         }

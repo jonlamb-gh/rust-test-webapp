@@ -6,8 +6,8 @@ pub struct Context {
     pub local_store: StorageService,
 }
 
-mod pieces;
+mod new_invoice;
 mod root;
 
-pub use self::pieces::PiecesModel;
+pub use self::new_invoice::NewInvoiceModel;
 pub use self::root::RootModel;
