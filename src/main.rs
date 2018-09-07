@@ -11,11 +11,12 @@ extern crate steel_cent;
 
 mod data;
 
-use data::Invoice;
-use data::Piece;
-
+/*
 #[cfg(not(feature = "web-spa"))]
 fn main() {
+    use data::Invoice;
+    use data::Piece;
+
     // TODO - update this with something
     println!("Creating a new invoice");
 
@@ -37,6 +38,7 @@ fn main() {
     println!("sales_tax_cost = {}", invoice.sales_tax_cost());
     println!("total_cost = {}", invoice.total_cost());
 }
+*/
 
 #[cfg(feature = "web-spa")]
 mod web;

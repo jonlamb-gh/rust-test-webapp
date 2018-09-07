@@ -1,5 +1,4 @@
 use stdweb::web::html_element::SelectElement;
-use yew::format::Json;
 use yew::prelude::*;
 
 use data::*;
@@ -50,16 +49,23 @@ impl Component<Context> for NewInvoiceModel {
 
 impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
     fn view(&self) -> Html<Context, Self> {
+        let header = |name: &str| {
+            html!{
+                <th>{ format!("{}", name) }</th>
+            }
+        };
+
+        let piece_col = |val: &str| {
+            html!{
+                <td>{ format!("{}", val) }</td>
+            }
+        };
+
         let piece_row = |piece: &Piece| {
+            let values = piece.enumerate();
             html!{
                 <tr>
-                    <td>{ piece.lumber_type().to_str() }</td>
-                    <td>{ piece.description() }</td>
-                    <td>{ format!("{}", piece.board_dimensions()) }</td>
-                    <td>{ "1" }</td>
-                    <td>{ piece.board_dimensions().board_feet() }</td>
-                    <td>{ format!("{}", piece.lumber_type().fob_price()) }</td>
-                    <td>{ format!("{}", piece.cost()) }</td>
+                    { for values.iter().map(|v| piece_col(v)) }
                 </tr>
             }
         };
@@ -70,14 +76,7 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
                 <table>
                     <thead>
                         <tr>
-                            <th>{"Lumber Type"}</th>
-                            <th>{"Description"}</th>
-                            <th>{"Dimensions (T x W x L)"}</th>
-                            <th>{"Quantity"}</th>
-                            <th>{"BF"}</th>
-                            <th>{"fob <LOCATION>"}</th>
-                            <th>{"Cost"}</th>
-                            <th>{" "}</th>
+                            { for Piece::enumerate_headers().iter().map(|h| header(h)) }
                         </tr>
                     </thead>
                     <tbody>
