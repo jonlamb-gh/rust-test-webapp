@@ -11,7 +11,26 @@ pub struct Invoice {
     estimated_shipping_cost: SmallMoney,
 }
 
+#[derive(Clone, PartialEq, Debug)]
+pub struct Summary {
+    total_pieces: usize,
+    estimated_shipping_cost: SmallMoney,
+    sub_total_cost: SmallMoney,
+    sales_tax_cost: SmallMoney,
+    total_cost: SmallMoney,
+}
+
 impl Invoice {
+    pub fn enumerate_headers() -> &'static [&'static str] {
+        &[
+            "Total Pieces",
+            "Estimated Shipping",
+            "Sub Total",
+            "Sales Tax 8.8%",
+            "Total Cost",
+        ]
+    }
+
     pub fn new() -> Self {
         Self {
             // this panics in the chrome console
@@ -19,6 +38,16 @@ impl Invoice {
             pieces: Vec::<Piece>::new(),
             // TODO
             estimated_shipping_cost: SmallMoney::zero(USD),
+        }
+    }
+
+    pub fn summary(&self) -> Summary {
+        Summary {
+            total_pieces: self.pieces.len(),
+            estimated_shipping_cost: self.estimated_shipping_cost,
+            sub_total_cost: self.sub_total_cost(),
+            sales_tax_cost: self.sales_tax_cost(),
+            total_cost: self.total_cost(),
         }
     }
 
@@ -55,5 +84,29 @@ impl Invoice {
 
     pub fn total_cost(&self) -> SmallMoney {
         self.sub_total_cost() + self.sales_tax_cost()
+    }
+}
+
+impl Default for Summary {
+    fn default() -> Self {
+        Summary {
+            total_pieces: 0,
+            estimated_shipping_cost: SmallMoney::zero(USD),
+            sub_total_cost: SmallMoney::zero(USD),
+            sales_tax_cost: SmallMoney::zero(USD),
+            total_cost: SmallMoney::zero(USD),
+        }
+    }
+}
+
+impl Summary {
+    pub fn enumerate(&self) -> [String; 5] {
+        [
+            self.total_pieces.to_string(),
+            format!("{}", self.estimated_shipping_cost),
+            format!("{}", self.sub_total_cost),
+            format!("{}", self.sales_tax_cost),
+            format!("{}", self.total_cost),
+        ]
     }
 }

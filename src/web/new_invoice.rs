@@ -1,4 +1,3 @@
-use stdweb::web::html_element::SelectElement;
 use yew::prelude::*;
 
 use data::*;
@@ -22,7 +21,7 @@ impl Component<Context> for NewInvoiceModel {
     fn create(_props: Self::Properties, context: &mut Env<Context, Self>) -> Self {
         context.console.debug("creating NewInvoiceModel");
 
-        NewInvoiceModel {
+        Self {
             invoice: Invoice::new(),
         }
     }
@@ -89,6 +88,73 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
                             </button>
                         </td></tr>
                     </tfoot>
+                </table>
+                <InvoiceSummaryModel: summary={self.invoice.summary()},/>
+            </>
+        }
+    }
+}
+
+#[derive(Clone, PartialEq, Default)]
+struct InvoiceSummaryModel {
+    summary: Summary,
+}
+
+enum InvoiceSummaryMsg {}
+
+impl Component<Context> for InvoiceSummaryModel {
+    type Message = InvoiceSummaryMsg;
+    type Properties = Self;
+
+    fn create(props: Self::Properties, context: &mut Env<Context, Self>) -> Self {
+        context.console.debug("creating InvoiceSummaryModel");
+
+        Self {
+            summary: props.summary,
+        }
+    }
+
+    fn update(&mut self, _msg: Self::Message, _context: &mut Env<Context, Self>) -> ShouldRender {
+        false
+    }
+
+    fn change(
+        &mut self,
+        _props: Self::Properties,
+        _context: &mut Env<Context, Self>,
+    ) -> ShouldRender {
+        false
+    }
+}
+
+impl Renderable<Context, InvoiceSummaryModel> for InvoiceSummaryModel {
+    fn view(&self) -> Html<Context, Self> {
+        let header = |name: &str| {
+            html!{
+                <th>{ format!("{}", name) }</th>
+            }
+        };
+
+        let summary_val = |val: &str| {
+            html!{
+                <td>{ format!("{}", val) }</td>
+            }
+        };
+
+        let summary_values = self.summary.enumerate();
+
+        html! {
+            <>
+                <h2>{"Summary"}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            { for Invoice::enumerate_headers().iter().map(|h| header(h)) }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { for summary_values.iter().map(|v| summary_val(v)) }
+                    </tbody>
                 </table>
             </>
         }
