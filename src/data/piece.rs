@@ -28,6 +28,10 @@ impl Piece {
         &self.board_dimensions
     }
 
+    pub fn lumber_type(&self) -> &LumberType {
+        &self.lumber_type
+    }
+
     pub fn cost(&self) -> SmallMoney {
         let lumber = Lumber::new(self.lumber_type.clone());
         let fob_price = lumber.fob_price();

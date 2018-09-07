@@ -14,14 +14,22 @@ pub struct Lumber {
 
 // TODO - lookup from somewhere
 impl Lumber {
-    pub fn new(_lumber_type: LumberType) -> Self {
+    pub fn new(lumber_type: LumberType) -> Self {
         Self {
-            description: String::from("Douglas Fir"),
+            description: String::from(lumber_type.to_str()),
             fob_price: SmallMoney::of_major_minor(USD, 2, 60),
         }
     }
 
     pub fn fob_price(&self) -> &SmallMoney {
         &self.fob_price
+    }
+}
+
+impl LumberType {
+    pub fn to_str(&self) -> &'static str {
+        match self {
+            LumberType::DouglasFir => "Douglas Fir",
+        }
     }
 }

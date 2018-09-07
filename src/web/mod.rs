@@ -6,6 +6,8 @@ pub struct Context {
     pub local_store: StorageService,
 }
 
+mod pieces;
 mod root;
 
+pub use self::pieces::PiecesModel;
 pub use self::root::RootModel;

@@ -21,29 +21,16 @@ impl Component<Context> for RootModel {
     }
 
     fn update(&mut self, msg: Self::Message, context: &mut Env<Context, Self>) -> ShouldRender {
-        match msg {
-            RootMsg::PeopleUpdated(version) => {
-                context
-                    .console
-                    .debug(&format!("root people version: {}", version));
-                if self.people_version != version {
-                    self.people_version = version;
-                    true
-                } else {
-                    false
-                }
-            }
-        }
+        true
     }
 }
 
 impl Renderable<Context, RootModel> for RootModel {
     fn view(&self) -> Html<Context, Self> {
-        //use web::Chart;
-
         html! {
             <div>
                 <h1>{"Test WebApp"}</h1>
+                <PiecesModel:/>
             <div/>
         }
     }

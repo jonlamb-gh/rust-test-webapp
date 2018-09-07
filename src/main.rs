@@ -1,10 +1,10 @@
 #[cfg(feature = "web-spa")]
 #[macro_use]
 extern crate yew;
-#[cfg(feature = "web-spa")]
-extern crate stdweb;
 extern crate chrono;
 extern crate dimensioned as dim;
+#[cfg(feature = "web-spa")]
+extern crate stdweb;
 extern crate steel_cent;
 
 mod data;
