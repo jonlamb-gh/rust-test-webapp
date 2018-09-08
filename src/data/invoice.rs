@@ -43,6 +43,7 @@ impl Invoice {
 
     pub fn summary(&self) -> Summary {
         Summary {
+            // TODO - once pieces have quantity this needs to change
             total_pieces: self.pieces.len(),
             estimated_shipping_cost: self.estimated_shipping_cost,
             sub_total_cost: self.sub_total_cost(),

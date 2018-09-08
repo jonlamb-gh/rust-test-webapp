@@ -40,8 +40,9 @@ impl Component<Context> for NewInvoiceModel {
     fn change(
         &mut self,
         _props: Self::Properties,
-        _context: &mut Env<Context, Self>,
+        context: &mut Env<Context, Self>,
     ) -> ShouldRender {
+        context.console.debug("update NewInvoiceModel props");
         false
     }
 }
@@ -114,16 +115,18 @@ impl Component<Context> for InvoiceSummaryModel {
         }
     }
 
-    fn update(&mut self, _msg: Self::Message, _context: &mut Env<Context, Self>) -> ShouldRender {
-        false
+    fn update(&mut self, msg: Self::Message, _context: &mut Env<Context, Self>) -> ShouldRender {
+        true
     }
 
     fn change(
         &mut self,
-        _props: Self::Properties,
-        _context: &mut Env<Context, Self>,
+        props: Self::Properties,
+        context: &mut Env<Context, Self>,
     ) -> ShouldRender {
-        false
+        context.console.debug("update InvoiceSummaryModel props");
+        self.summary = props.summary;
+        true
     }
 }
 

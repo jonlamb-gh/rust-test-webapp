@@ -1,5 +1,7 @@
 // TODO - quantity here?
-// rename to billable_item?
+// rename to billable_item or just item, piece doesn't really work
+// if it has a quantity property?
+// traits/rename/etc for enumerate/formatting for table view
 
 use data::BoardDimensions;
 use data::LumberType;
