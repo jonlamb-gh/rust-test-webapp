@@ -62,8 +62,7 @@ impl Invoice {
 
     pub fn summary(&self) -> Summary {
         Summary {
-            // TODO - once pieces have quantity this needs to change
-            total_pieces: self.items.len(),
+            total_pieces: self.total_pieces(),
             estimated_shipping_cost: self.estimated_shipping_cost,
             sub_total_cost: self.sub_total_cost(),
             sales_tax_cost: self.sales_tax_cost(),
@@ -75,8 +74,22 @@ impl Invoice {
         self.items.push(item);
     }
 
+    pub fn remove_billable_item(&mut self, item_index: usize) {
+        self.items.remove(item_index);
+    }
+
     pub fn items(&self) -> &[BillableItem] {
         &self.items
+    }
+
+    pub fn total_pieces(&self) -> usize {
+        let mut sum: usize = 0;
+
+        for i in self.items().iter() {
+            sum = sum + i.quantity();
+        }
+
+        sum
     }
 
     pub fn sub_total_cost(&self) -> SmallMoney {

@@ -49,6 +49,10 @@ impl BillableItem {
         ]
     }
 
+    pub fn quantity(&self) -> usize {
+        self.quantity
+    }
+
     pub fn cost(&self) -> SmallMoney {
         let fob_price = self.lumber_type.fob_price();
 

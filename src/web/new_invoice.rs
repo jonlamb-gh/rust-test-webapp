@@ -47,6 +47,7 @@ impl Component<Context> for NewInvoiceModel {
             }
             NewInvoiceMsg::DeleteItem(id) => {
                 context.console.debug(&format!("delete item: {}", id));
+                self.invoice.remove_billable_item(id);
                 true
             }
         }
