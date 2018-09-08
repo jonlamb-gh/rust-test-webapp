@@ -430,7 +430,7 @@ impl Renderable<Context, UsizeInput> for UsizeInput {
     fn view(&self) -> Html<Context, Self> {
         if self.is_editting {
             html! {
-                <input type="text", value={self.value.to_string()}, oninput=|e| UsizeInputMsg::Input(e.value.parse::<usize>().unwrap()), />
+                <input type="number", value={self.value.to_string()}, oninput=|e| UsizeInputMsg::Input(e.value.parse::<usize>().unwrap()), min="1", />
             }
         } else {
             html! {

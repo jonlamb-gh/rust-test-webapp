@@ -59,6 +59,7 @@ impl BillableItem {
         self.quantity
     }
 
+    // TODO - where to enforce > 0?
     pub fn set_quantity(&mut self, quantity: usize) {
         self.quantity = quantity;
     }
