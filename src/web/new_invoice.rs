@@ -1,3 +1,5 @@
+// TODO - break this apart
+
 use stdweb::web::html_element::SelectElement;
 use yew::callback::Callback;
 use yew::prelude::*;
@@ -12,10 +14,12 @@ pub enum NewInvoiceMsg {
     AddItem,
     EditItem(Id),
     DeleteItem(Id),
+    ItemQuantityInput(Id, usize),
 }
 
 pub struct NewInvoiceModel {
     invoice: Invoice,
+    editing_item_id: Option<Id>,
 }
 
 #[derive(Clone, Default, PartialEq)]
@@ -30,6 +34,7 @@ impl Component<Context> for NewInvoiceModel {
 
         Self {
             invoice: Invoice::new(),
+            editing_item_id: None,
         }
     }
 
@@ -39,15 +44,34 @@ impl Component<Context> for NewInvoiceModel {
                 context.console.debug("adding new item");
                 let item = BillableItem::new();
                 self.invoice.add_billable_item(item);
+
+                // stop editing when something is added
+                self.editing_item_id = None;
+
                 true
             }
             NewInvoiceMsg::EditItem(id) => {
                 context.console.debug(&format!("edit item: {}", id));
+                self.editing_item_id = Some(id);
                 true
             }
             NewInvoiceMsg::DeleteItem(id) => {
                 context.console.debug(&format!("delete item: {}", id));
                 self.invoice.remove_billable_item(id);
+
+                // stop editing when something is deleted
+                self.editing_item_id = None;
+
+                true
+            }
+            NewInvoiceMsg::ItemQuantityInput(id, q) => {
+                context
+                    .console
+                    .debug(&format!("item: {} quantity {}", id, q));
+
+                let mut item = self.invoice.get_mut_billable_item(id);
+                item.set_quantity(q);
+
                 true
             }
         }
@@ -85,9 +109,26 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
 
         let item_row = |id: Id, item: &BillableItem| {
             let values = item.enumerate();
+            let is_editing = if let Some(editing_id) = self.editing_item_id {
+                if editing_id == id {
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            };
+
+            //{ for values.iter().map(|v| item_col_val(v)) }
             html!{
                 <tr>
-                    { for values.iter().map(|v| item_col_val(v)) }
+                    { item_col_val(&values[0]) }
+                    { item_col_val(&values[1]) }
+                    { item_col_val(&values[2]) }
+                    <td><UsizeInput: id={id}, value={item.quantity()}, is_editting={is_editing}, on_input=|(i,q)| NewInvoiceMsg::ItemQuantityInput(i, q),/></td>
+                    { item_col_val(&values[4]) }
+                    { item_col_val(&values[5]) }
+                    { item_col_val(&values[6]) }
                     <td class="edit_delete",>{ edit_delete(id, false) }</td>
                 </tr>
             }
@@ -321,6 +362,80 @@ impl Renderable<Context, EditDelete> for EditDelete {
                 <i class=("fa", "fa-pencil-square-o", "fa-fw", disabled), aria-hidden="true", onclick=|_| EditDeleteMsg::Edit, />
                 <i class=("fa", "fa-trash", "fa-fw"), aria-hidden="true", onclick=|_| EditDeleteMsg::Delete, />
             </div>
+        }
+    }
+}
+
+#[derive(Clone, PartialEq, Default)]
+struct UsizeInput {
+    pub id: Id,
+    pub value: usize,
+    pub is_editting: IsEditting,
+    pub on_input: Option<Callback<(Id, usize)>>,
+}
+
+enum UsizeInputMsg {
+    Input(usize),
+}
+
+impl Component<Context> for UsizeInput {
+    type Message = UsizeInputMsg;
+    type Properties = Self;
+
+    fn create(props: Self::Properties, _context: &mut Env<Context, Self>) -> Self {
+        Self {
+            id: props.id,
+            value: props.value,
+            is_editting: props.is_editting,
+            on_input: props.on_input,
+        }
+    }
+
+    fn update(&mut self, msg: Self::Message, context: &mut Env<Context, Self>) -> ShouldRender {
+        match msg {
+            UsizeInputMsg::Input(v) => {
+                context
+                    .console
+                    .debug(&format!("usize input: {}, {}", self.id, self.value));
+                if self.is_editting {
+                    self.on_input.as_ref().map(|c| c.emit((self.id, v)));
+                }
+            }
+        }
+
+        false
+    }
+
+    fn change(
+        &mut self,
+        props: Self::Properties,
+        _context: &mut Env<Context, Self>,
+    ) -> ShouldRender {
+        let mut render = false;
+        if self.is_editting != props.is_editting {
+            self.is_editting = props.is_editting;
+            render |= true;
+        }
+
+        if self.value != props.value {
+            self.value = props.value;
+            render |= true;
+        }
+        render
+    }
+}
+
+// TODO - form validator instead of unwrap()
+impl Renderable<Context, UsizeInput> for UsizeInput {
+    fn view(&self) -> Html<Context, Self> {
+        if self.is_editting {
+            html! {
+                <input type="text", value={self.value.to_string()}, oninput=|e| UsizeInputMsg::Input(e.value.parse::<usize>().unwrap()), />
+            }
+        } else {
+            html! {
+                <>{ self.value.to_string() }</>
+            }
         }
     }
 }

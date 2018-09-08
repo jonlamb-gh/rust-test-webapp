@@ -78,6 +78,10 @@ impl Invoice {
         self.items.remove(item_index);
     }
 
+    pub fn get_mut_billable_item(&mut self, item_index: usize) -> &mut BillableItem {
+        &mut self.items[item_index]
+    }
+
     pub fn items(&self) -> &[BillableItem] {
         &self.items
     }
