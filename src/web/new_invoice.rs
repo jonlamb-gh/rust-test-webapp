@@ -4,7 +4,7 @@ use data::*;
 use web::*;
 
 pub enum NewInvoiceMsg {
-    AddPiece,
+    AddItem,
 }
 
 pub struct NewInvoiceModel {
@@ -28,10 +28,10 @@ impl Component<Context> for NewInvoiceModel {
 
     fn update(&mut self, msg: Self::Message, context: &mut Env<Context, Self>) -> ShouldRender {
         match msg {
-            NewInvoiceMsg::AddPiece => {
-                context.console.debug("adding a Piece");
-                let piece = Piece::new();
-                self.invoice.add_piece(piece);
+            NewInvoiceMsg::AddItem => {
+                context.console.debug("adding new item");
+                let item = BillableItem::new();
+                self.invoice.add_billable_item(item);
                 true
             }
         }
@@ -55,17 +55,17 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
             }
         };
 
-        let piece_col = |val: &str| {
+        let item_col_val = |val: &str| {
             html!{
                 <td>{ format!("{}", val) }</td>
             }
         };
 
-        let piece_row = |piece: &Piece| {
-            let values = piece.enumerate();
+        let item_row = |item: &BillableItem| {
+            let values = item.enumerate();
             html!{
                 <tr>
-                    { for values.iter().map(|v| piece_col(v)) }
+                    { for values.iter().map(|v| item_col_val(v)) }
                 </tr>
             }
         };
@@ -76,15 +76,15 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
                 <table>
                     <thead>
                         <tr>
-                            { for Piece::enumerate_headers().iter().map(|h| header(h)) }
+                            { for BillableItem::enumerate_headers().iter().map(|h| header(h)) }
                         </tr>
                     </thead>
                     <tbody>
-                        { for self.invoice.pieces().iter().map(|p| piece_row(p)) }
+                        { for self.invoice.items().iter().map(|i| item_row(i)) }
                     </tbody>
                     <tfoot>
                         <tr><td>
-                            <button onclick=|_| NewInvoiceMsg::AddPiece, >
+                            <button onclick=|_| NewInvoiceMsg::AddItem, >
                                 <i class=("fa", "fa-plus-square"), aria-hidden="true",></i>
                             </button>
                         </td></tr>
@@ -115,7 +115,7 @@ impl Component<Context> for InvoiceSummaryModel {
         }
     }
 
-    fn update(&mut self, msg: Self::Message, _context: &mut Env<Context, Self>) -> ShouldRender {
+    fn update(&mut self, _msg: Self::Message, _context: &mut Env<Context, Self>) -> ShouldRender {
         true
     }
 

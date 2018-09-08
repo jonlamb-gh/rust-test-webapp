@@ -1,13 +1,13 @@
 //use chrono::prelude::*;
-use data::Piece;
+use data::BillableItem;
 use steel_cent::currency::USD;
 use steel_cent::SmallMoney;
 
 #[derive(Clone, Debug)]
 pub struct Invoice {
-    // TODO
+    // TODO - how to get time with our wasm target?
     //date: DateTime<Utc>,
-    pieces: Vec<Piece>,
+    items: Vec<BillableItem>,
     estimated_shipping_cost: SmallMoney,
 }
 
@@ -35,7 +35,7 @@ impl Invoice {
         Self {
             // this panics in the chrome console
             //date: Utc::now(),
-            pieces: Vec::<Piece>::new(),
+            items: Vec::<BillableItem>::new(),
             // TODO
             estimated_shipping_cost: SmallMoney::zero(USD),
         }
@@ -44,7 +44,7 @@ impl Invoice {
     pub fn summary(&self) -> Summary {
         Summary {
             // TODO - once pieces have quantity this needs to change
-            total_pieces: self.pieces.len(),
+            total_pieces: self.items.len(),
             estimated_shipping_cost: self.estimated_shipping_cost,
             sub_total_cost: self.sub_total_cost(),
             sales_tax_cost: self.sales_tax_cost(),
@@ -58,19 +58,19 @@ impl Invoice {
     }
     */
 
-    pub fn add_piece(&mut self, piece: Piece) {
-        self.pieces.push(piece);
+    pub fn add_billable_item(&mut self, item: BillableItem) {
+        self.items.push(item);
     }
 
-    pub fn pieces(&self) -> &[Piece] {
-        &self.pieces
+    pub fn items(&self) -> &[BillableItem] {
+        &self.items
     }
 
     pub fn sub_total_cost(&self) -> SmallMoney {
         let mut sum = SmallMoney::zero(USD);
 
-        for p in self.pieces.iter() {
-            sum = sum + p.cost();
+        for i in self.items.iter() {
+            sum = sum + i.cost();
         }
 
         sum = sum + self.estimated_shipping_cost;

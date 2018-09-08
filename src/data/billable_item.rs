@@ -1,6 +1,3 @@
-// TODO - quantity here?
-// rename to billable_item or just item, piece doesn't really work
-// if it has a quantity property?
 // traits/rename/etc for enumerate/formatting for table view
 
 use data::BoardDimensions;
@@ -8,14 +5,14 @@ use data::LumberType;
 use steel_cent::SmallMoney;
 
 #[derive(Clone, Debug)]
-pub struct Piece {
+pub struct BillableItem {
     lumber_type: LumberType,
     description: String,
     board_dimensions: BoardDimensions,
     quantity: usize,
 }
 
-impl Piece {
+impl BillableItem {
     pub fn enumerate_headers() -> &'static [&'static str] {
         &[
             "Lumber Type",
