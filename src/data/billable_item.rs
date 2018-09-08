@@ -22,6 +22,8 @@ impl BillableItem {
             "BF",
             "fob <LOCATION>",
             "Cost",
+            // this provides a column for the edit/delete buttons
+            " ",
         ]
     }
 

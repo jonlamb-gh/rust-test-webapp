@@ -1,10 +1,17 @@
+use stdweb::web::html_element::SelectElement;
+use yew::callback::Callback;
 use yew::prelude::*;
 
 use data::*;
 use web::*;
 
+type IsEditting = bool;
+type Id = usize;
+
 pub enum NewInvoiceMsg {
     AddItem,
+    EditItem(Id),
+    DeleteItem(Id),
 }
 
 pub struct NewInvoiceModel {
@@ -34,6 +41,14 @@ impl Component<Context> for NewInvoiceModel {
                 self.invoice.add_billable_item(item);
                 true
             }
+            NewInvoiceMsg::EditItem(id) => {
+                context.console.debug(&format!("edit item: {}", id));
+                true
+            }
+            NewInvoiceMsg::DeleteItem(id) => {
+                context.console.debug(&format!("delete item: {}", id));
+                true
+            }
         }
     }
 
@@ -61,11 +76,18 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
             }
         };
 
-        let item_row = |item: &BillableItem| {
+        let edit_delete = |id: Id, is_editting: IsEditting| {
+            html!{
+                <EditDelete: id={id}, is_editting={is_editting}, on_edit=|id: Id| NewInvoiceMsg::EditItem(id), on_delete=|id: Id| NewInvoiceMsg::DeleteItem(id), />
+            }
+        };
+
+        let item_row = |id: Id, item: &BillableItem| {
             let values = item.enumerate();
             html!{
                 <tr>
                     { for values.iter().map(|v| item_col_val(v)) }
+                    <td class="edit_delete",>{ edit_delete(id, false) }</td>
                 </tr>
             }
         };
@@ -80,7 +102,7 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
                         </tr>
                     </thead>
                     <tbody>
-                        { for self.invoice.items().iter().map(|i| item_row(i)) }
+                        { for self.invoice.items().iter().enumerate().map(|(i, b)| item_row(i, b)) }
                     </tbody>
                     <tfoot>
                         <tr><td>
@@ -229,6 +251,75 @@ impl Renderable<Context, OrderInfoModel> for OrderInfoModel {
                     </tbody>
                 </table>
             </>
+        }
+    }
+}
+
+#[derive(Clone, PartialEq, Default)]
+struct EditDelete {
+    pub id: Id,
+    pub is_editting: IsEditting,
+    pub on_edit: Option<Callback<Id>>,
+    pub on_delete: Option<Callback<Id>>,
+}
+
+enum EditDeleteMsg {
+    Edit,
+    Delete,
+}
+
+impl Component<Context> for EditDelete {
+    type Message = EditDeleteMsg;
+    type Properties = Self;
+
+    fn create(props: Self::Properties, _context: &mut Env<Context, Self>) -> Self {
+        Self {
+            id: props.id,
+            is_editting: props.is_editting,
+            on_edit: props.on_edit,
+            on_delete: props.on_delete,
+        }
+    }
+
+    fn update(&mut self, msg: Self::Message, context: &mut Env<Context, Self>) -> ShouldRender {
+        match msg {
+            EditDeleteMsg::Edit => {
+                context.console.debug(&format!("editting: {}", self.id));
+                if !self.is_editting {
+                    self.on_edit.as_ref().map(|c| c.emit(self.id));
+                }
+            }
+            EditDeleteMsg::Delete => {
+                context.console.debug(&format!("deleting: {}", self.id));
+                self.on_delete.as_ref().map(|c| c.emit(self.id));
+            }
+        }
+
+        false
+    }
+
+    fn change(
+        &mut self,
+        props: Self::Properties,
+        _context: &mut Env<Context, Self>,
+    ) -> ShouldRender {
+        if self.is_editting != props.is_editting {
+            self.is_editting = props.is_editting;
+            return true;
+        }
+        false
+    }
+}
+
+impl Renderable<Context, EditDelete> for EditDelete {
+    fn view(&self) -> Html<Context, Self> {
+        let disabled = if self.is_editting { "disabled" } else { "" };
+
+        html! {
+            <div class="edit_delete", >
+                <i class=("fa", "fa-pencil-square-o", "fa-fw", disabled), aria-hidden="true", onclick=|_| EditDeleteMsg::Edit, />
+                <i class=("fa", "fa-trash", "fa-fw"), aria-hidden="true", onclick=|_| EditDeleteMsg::Delete, />
+            </div>
         }
     }
 }
