@@ -2,8 +2,7 @@
 // BoardFoot<f64>
 // constraints like len > 0?
 
-pub use dim::ucum;
-use dim::Dimensionless;
+use dim::{ucum, Dimensionless};
 use std::fmt::{self, Display, Formatter};
 
 #[derive(Clone, Debug)]

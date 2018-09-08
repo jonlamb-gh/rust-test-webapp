@@ -91,6 +91,7 @@ impl Renderable<Context, NewInvoiceModel> for NewInvoiceModel {
                     </tfoot>
                 </table>
                 <InvoiceSummaryModel: summary={self.invoice.summary()},/>
+                <OrderInfoModel: order_info={self.invoice.order_info().clone()},/>
             </>
         }
     }
@@ -157,6 +158,74 @@ impl Renderable<Context, InvoiceSummaryModel> for InvoiceSummaryModel {
                     </thead>
                     <tbody>
                         { for summary_values.iter().map(|v| summary_val(v)) }
+                    </tbody>
+                </table>
+            </>
+        }
+    }
+}
+
+#[derive(Clone, PartialEq, Default)]
+struct OrderInfoModel {
+    order_info: OrderInfo,
+}
+
+enum OrderInfoMsg {}
+
+impl Component<Context> for OrderInfoModel {
+    type Message = OrderInfoMsg;
+    type Properties = Self;
+
+    fn create(props: Self::Properties, context: &mut Env<Context, Self>) -> Self {
+        context.console.debug("creating OrderInfoModel");
+
+        Self {
+            order_info: props.order_info,
+        }
+    }
+
+    fn update(&mut self, _msg: Self::Message, _context: &mut Env<Context, Self>) -> ShouldRender {
+        true
+    }
+
+    fn change(
+        &mut self,
+        props: Self::Properties,
+        context: &mut Env<Context, Self>,
+    ) -> ShouldRender {
+        context.console.debug("update OrderInfoModel props");
+        self.order_info = props.order_info;
+        true
+    }
+}
+
+impl Renderable<Context, OrderInfoModel> for OrderInfoModel {
+    fn view(&self) -> Html<Context, Self> {
+        let header = |name: &str| {
+            html!{
+                <th>{ format!("{}", name) }</th>
+            }
+        };
+
+        let info_val = |val: &str| {
+            html!{
+                <td>{ format!("{}", val) }</td>
+            }
+        };
+
+        let values = self.order_info.enumerate();
+
+        html! {
+            <>
+                <h2>{"Order Information"}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            { for OrderInfo::enumerate_headers().iter().map(|h| header(h)) }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { for values.iter().map(|v| info_val(v)) }
                     </tbody>
                 </table>
             </>

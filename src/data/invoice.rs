@@ -1,12 +1,26 @@
 //use chrono::prelude::*;
 use data::BillableItem;
+use dim::ucum;
 use steel_cent::currency::USD;
 use steel_cent::SmallMoney;
 
+#[derive(Clone, PartialEq, Debug)]
+pub struct OrderInfo {
+    // TODO - customer lookup/db
+    customer: String,
+    confirms_with: String,
+    // TODO - how to get time with our wasm target?
+    //order_date: DateTime<Utc>,
+    //shipment_date: DateTime<Utc>,
+    // TODO - proper type
+    order_number: u32,
+    weight_estimate: ucum::Gram<f64>,
+    will_call: bool,
+}
+
 #[derive(Clone, Debug)]
 pub struct Invoice {
-    // TODO - how to get time with our wasm target?
-    //date: DateTime<Utc>,
+    order_info: OrderInfo,
     items: Vec<BillableItem>,
     estimated_shipping_cost: SmallMoney,
 }
@@ -35,10 +49,15 @@ impl Invoice {
         Self {
             // this panics in the chrome console
             //date: Utc::now(),
+            order_info: OrderInfo::default(),
             items: Vec::<BillableItem>::new(),
             // TODO
             estimated_shipping_cost: SmallMoney::zero(USD),
         }
+    }
+
+    pub fn order_info(&self) -> &OrderInfo {
+        &self.order_info
     }
 
     pub fn summary(&self) -> Summary {
@@ -51,12 +70,6 @@ impl Invoice {
             total_cost: self.total_cost(),
         }
     }
-
-    /*
-    pub fn date(&self) -> &DateTime<Utc> {
-        &self.date
-    }
-    */
 
     pub fn add_billable_item(&mut self, item: BillableItem) {
         self.items.push(item);
@@ -85,6 +98,51 @@ impl Invoice {
 
     pub fn total_cost(&self) -> SmallMoney {
         self.sub_total_cost() + self.sales_tax_cost()
+    }
+}
+
+impl Default for OrderInfo {
+    fn default() -> Self {
+        OrderInfo {
+            customer: String::from("NEW CUSTOMER"),
+            confirms_with: String::new(),
+            // TODO - how to get time with our wasm target?
+            //order_date: DateTime<Utc>,
+            //shipment_date: DateTime<Utc>,
+            // TODO - proper type
+            order_number: 1,
+            weight_estimate: ucum::Gram::new(0.0),
+            will_call: false,
+        }
+    }
+}
+
+impl OrderInfo {
+    pub fn enumerate_headers() -> &'static [&'static str] {
+        &[
+            "Customer",
+            "Confirms with",
+            "Order Number",
+            "Est Weight",
+            "Order Date",
+            "Shipment Date",
+            "Will Call",
+        ]
+    }
+
+    pub fn enumerate(&self) -> [String; 7] {
+        [
+            format!("{}", self.customer),
+            format!("{}", self.confirms_with),
+            self.order_number.to_string(),
+            format!("{}", self.weight_estimate),
+            String::from("NA"),
+            String::from("NA"),
+            String::from(match self.will_call {
+                true => "Yes",
+                false => "No",
+            }),
+        ]
     }
 }
 
