@@ -1,4 +1,5 @@
 // TODO - break this apart
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#Validation
 
 use stdweb::web::html_element::SelectElement;
 use yew::callback::Callback;
@@ -370,6 +371,7 @@ impl Renderable<Context, EditDelete> for EditDelete {
 struct UsizeInput {
     pub id: Id,
     pub value: usize,
+    // TODO - add min/max properties?
     pub is_editting: IsEditting,
     pub on_input: Option<Callback<(Id, usize)>>,
 }
